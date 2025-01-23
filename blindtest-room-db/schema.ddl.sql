@@ -1,0 +1,7 @@
+DROP TABLE IF EXISTS hosts;
+
+CREATE TABLE hosts (
+    id SERIAL PRIMARY KEY,
+    email VARCHAR(255) UNIQUE NOT NULL,
+    password CHAR(60) NOT NULL
+);
