@@ -1,17 +1,23 @@
 package com.tluton.blinddest_room_api.controllers;
 
-import org.springframework.security.access.annotation.Secured;
-import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import com.tluton.blinddest_room_api.dtos.Credentials;
+import com.tluton.blinddest_room_api.dtos.TokenInfo;
+import com.tluton.blinddest_room_api.errors.BusinessError;
+import com.tluton.blinddest_room_api.services.AuthService;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/auth")
 public class AuthController {
 
-    @GetMapping()
-    public String helloWorld(){
-        return "Hello world!";
+    private final AuthService authService;
+
+    public AuthController(AuthService authService){
+        this.authService = authService;
+    }
+
+    @PostMapping()
+    public TokenInfo signIn(@RequestBody Credentials inputs) throws BusinessError {
+        return authService.signIn(inputs);
     }
 }

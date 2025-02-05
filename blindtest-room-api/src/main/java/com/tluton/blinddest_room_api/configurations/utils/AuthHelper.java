@@ -26,16 +26,14 @@ public class AuthHelper {
         return encoder.matches(candidate, hash);
     }
 
-    public String createJWT(List<String> roles, String email){
+    public String createJWT(String email){
         Instant now = Instant.now();
         Instant expirationTime = now.plusSeconds(expiration);
-        String[] rolesAsArray = roles.toArray(new String[roles.size()]);
         return JWT.create()
                 .withIssuer(issuer)
                 .withSubject(email)
                 .withIssuedAt(now)
                 .withExpiresAt(expirationTime)
-                .withArrayClaim("roles", rolesAsArray)
                 .sign(algorithm);
     }
 
