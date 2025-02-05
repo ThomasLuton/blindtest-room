@@ -1,6 +1,7 @@
-import { Component, inject } from '@angular/core';
+import {Component, inject, signal} from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
+import {environment} from "../../environments/environment";
 
 @Component({
   selector: 'app-home',
