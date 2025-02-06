@@ -1,10 +1,10 @@
 import { Component, inject } from '@angular/core';
-import { RouterLink } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from "@angular/forms";
 import { AuthService } from "../../services/auth.service";
 import { Credential } from "../../models/credential";
 import { ToastService } from '../../services/toast.service';
-import {catchError, of} from "rxjs";
+import { catchError, of } from "rxjs";
 
 @Component({
   selector: 'app-sign-in',
@@ -16,6 +16,7 @@ import {catchError, of} from "rxjs";
 export class SignInComponent {
 
   private readonly authService = inject(AuthService);
+  private readonly router = inject(Router);
   private readonly toast = inject(ToastService);
   private localStorageKey = 'api-token'
 
@@ -33,9 +34,10 @@ export class SignInComponent {
         email: this.form.value.email?.trim() as string,
         password: this.form.value.password?.trim() as string
       }
-      this.authService.signIn(inputs).subscribe((resp) =>{
+      this.authService.signIn(inputs).subscribe((resp) => {
         localStorage.setItem(this.localStorageKey, resp.token);
-        this.toast.success("toast-global", "Welcome back")
+        this.toast.success("toast-global", "Welcome back");
+        this.router.navigate([""]);
       })
     }
   }
