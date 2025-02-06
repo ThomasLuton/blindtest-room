@@ -1,4 +1,4 @@
-import {Component, inject, signal} from '@angular/core';
+import {Component, computed, inject, signal} from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 import {environment} from "../../environments/environment";
@@ -12,6 +12,7 @@ import {environment} from "../../environments/environment";
 })
 export class HomeComponent {
 
+  logged = computed(() => !!localStorage.getItem('api-token'))
   readonly router = inject(Router)
   form = new FormGroup(
     {

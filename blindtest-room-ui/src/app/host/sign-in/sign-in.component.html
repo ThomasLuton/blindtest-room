@@ -13,7 +13,7 @@
                     <input formControlName="password"  class="form-control form-control-lg" type="password" name="password" id="password"
                         placeholder="Mot de passe">
                 </div>
-                <button class="btn btn-primary" type="submit">Se connecter</button>
+                <button [disabled]="form.invalid" class="btn btn-primary" type="submit">Se connecter</button>
             </form>
         </div>
     </div>
