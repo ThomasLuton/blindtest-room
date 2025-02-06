@@ -1,8 +1,9 @@
-import {Component, inject} from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { RouterLink } from '@angular/router';
-import {FormControl, FormGroup, ReactiveFormsModule, Validators} from "@angular/forms";
-import {AuthService} from "../../services/auth.service";
-import {Credential} from "../../models/credential";
+import { FormControl, FormGroup, ReactiveFormsModule, Validators } from "@angular/forms";
+import { AuthService } from "../../services/auth.service";
+import { Credential } from "../../models/credential";
+import { ToastService } from '../../services/toast.service';
 
 @Component({
   selector: 'app-sign-in',
@@ -14,6 +15,7 @@ import {Credential} from "../../models/credential";
 export class SignInComponent {
 
   private readonly authService = inject(AuthService);
+  private readonly toast = inject(ToastService);
 
   form = new FormGroup(
     {
@@ -24,12 +26,12 @@ export class SignInComponent {
 
   onSubmit() {
     const isFormValid = this.form.valid;
-    if(isFormValid){
+    if (isFormValid) {
       const inputs: Credential = {
         email: this.form.value.email as string,
         password: this.form.value.password as string
       }
-      this.authService.signIn(inputs).subscribe((resp) => console.log(resp))
+      this.authService.signIn(inputs).subscribe((resp) => this.toast.success("toast-global", resp.token))
     }
   }
 }

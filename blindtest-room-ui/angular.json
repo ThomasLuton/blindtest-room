@@ -33,7 +33,9 @@
             "styles": [
               "public/css/bootstrap.css"
             ],
-            "scripts": []
+            "scripts": [
+              "node_modules/bootstrap/dist/js/bootstrap.bundle.min.js"
+            ]
           },
           "configurations": {
             "production": {
@@ -95,7 +97,7 @@
               }
             ],
             "styles": [
-              "public/css/bootstrap.css"
+              "src/styles.css"
             ],
             "scripts": []
           }

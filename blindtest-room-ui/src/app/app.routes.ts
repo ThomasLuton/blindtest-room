@@ -4,6 +4,7 @@ import { LobbyComponent } from './lobby/lobby.component';
 import { HomeComponent } from './home/home.component';
 import { OverviewComponent } from './host/overview/overview.component';
 import { ControlComponent } from './host/control/control.component';
+import {NotFoundComponent} from "./commons/not-found/not-found.component";
 
 export const routes: Routes = [
     {
@@ -30,5 +31,9 @@ export const routes: Routes = [
         path: '',
         redirectTo: '/home',
         pathMatch: 'full'
+    },
+    {
+      path: '**',
+      component: NotFoundComponent
     }
 ];
