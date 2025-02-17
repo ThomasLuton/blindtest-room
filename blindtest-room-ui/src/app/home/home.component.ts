@@ -1,7 +1,7 @@
-import {Component, computed, inject, signal} from '@angular/core';
-import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { Component, effect, inject, signal } from '@angular/core';
+import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
-import {environment} from "../../environments/environment";
+import { ToastService } from '../services/toast.service';
 
 @Component({
   selector: 'app-home',
@@ -12,8 +12,9 @@ import {environment} from "../../environments/environment";
 })
 export class HomeComponent {
 
-  logged = computed(() => !!localStorage.getItem('api-token'))
+  logged = signal(!!localStorage.getItem('api-token'))
   readonly router = inject(Router)
+  private readonly toast = inject(ToastService);
   form = new FormGroup(
     {
       sessionId: new FormControl('')
@@ -22,5 +23,11 @@ export class HomeComponent {
 
   onSubmit() {
     this.router.navigate(["/play/" + this.form.value.sessionId])
+  }
+
+  logOut() {
+    localStorage.removeItem('api-token');
+    this.logged.set(false);
+    this.toast.success('toast-global', 'Bonne journée');
   }
 }

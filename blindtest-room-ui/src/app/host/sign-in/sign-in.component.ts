@@ -4,7 +4,6 @@ import { FormControl, FormGroup, ReactiveFormsModule, Validators } from "@angula
 import { AuthService } from "../../services/auth.service";
 import { Credential } from "../../models/credential";
 import { ToastService } from '../../services/toast.service';
-import { catchError, of } from "rxjs";
 
 @Component({
   selector: 'app-sign-in',
@@ -36,7 +35,7 @@ export class SignInComponent {
       }
       this.authService.signIn(inputs).subscribe((resp) => {
         localStorage.setItem(this.localStorageKey, resp.token);
-        this.toast.success("toast-global", "Welcome back");
+        this.toast.success("toast-global", "Bon retour");
         this.router.navigate([""]);
       })
     }
