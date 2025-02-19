@@ -4,7 +4,8 @@ import { LobbyComponent } from './lobby/lobby.component';
 import { HomeComponent } from './home/home.component';
 import { OverviewComponent } from './host/overview/overview.component';
 import { ControlComponent } from './host/control/control.component';
-import {NotFoundComponent} from "./commons/not-found/not-found.component";
+import { NotFoundComponent } from "./commons/not-found/not-found.component";
+import { AuthGuard } from './guards/auth.guard';
 
 export const routes: Routes = [
     {
@@ -24,8 +25,9 @@ export const routes: Routes = [
         component: OverviewComponent
     },
     {
-        path: 'control/:id',
-        component: ControlComponent
+        path: 'control',
+        component: ControlComponent,
+        canActivate: [AuthGuard]
     },
     {
         path: '',
@@ -33,7 +35,7 @@ export const routes: Routes = [
         pathMatch: 'full'
     },
     {
-      path: '**',
-      component: NotFoundComponent
+        path: '**',
+        component: NotFoundComponent
     }
 ];

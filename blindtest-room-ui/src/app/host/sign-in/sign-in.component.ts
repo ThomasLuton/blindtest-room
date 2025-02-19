@@ -36,7 +36,7 @@ export class SignInComponent {
       this.authService.signIn(inputs).subscribe((resp) => {
         localStorage.setItem(this.localStorageKey, resp.token);
         this.toast.success("toast-global", "Bon retour");
-        this.router.navigate([""]);
+        this.router.navigate(["control"]);
       })
     }
   }
