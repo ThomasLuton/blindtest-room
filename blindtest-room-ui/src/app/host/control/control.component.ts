@@ -1,12 +1,13 @@
-import { Component, inject, signal } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router';
+import { Component, computed, inject, signal } from '@angular/core';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { ToastService } from '../../services/toast.service';
 import { SpotifyService } from '../../services/spotify.service';
+import { OverviewComponent } from '../overview/overview.component';
 
 @Component({
   selector: 'app-control',
   standalone: true,
-  imports: [],
+  imports: [OverviewComponent, RouterLink],
   templateUrl: './control.component.html',
   styles: ``
 })
@@ -14,7 +15,9 @@ export class ControlComponent {
 
   logged = signal(!!localStorage.getItem('api-token'))
   spotifyLogged = signal(!!localStorage.getItem('spotifyAccessToken'));
-  readonly router = inject(Router)
+  sessionId = signal(234)
+  redirectId = computed(() => '/overview/' + this.sessionId())
+  readonly router = inject(Router);
   readonly activatedRoute = inject(ActivatedRoute);
   private readonly toast = inject(ToastService);
   private readonly spotify = inject(SpotifyService);
@@ -48,5 +51,12 @@ export class ControlComponent {
 
   connectToSpotify() {
     window.location.href = this.spotify.generateRedirectURI();
+  }
+
+  disconnectToSpotify() {
+    localStorage.removeItem('spotifyAccessToken');
+    localStorage.removeItem('spotifyRefreshToken');
+    this.toast.success('toast-global', 'Connection avec Spotify interrompu');
+    this.spotifyLogged.set(false)
   }
 }

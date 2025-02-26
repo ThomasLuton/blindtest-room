@@ -1,23 +1,33 @@
 <div class="min-vh-100 position-relative">
     <div class="position-absolute top-0 end-0">
+        <a class="btn btn-outline-primary m-3" role="button" routerLink="/home">Accueil</a>
         <a class="btn btn-outline-primary m-3" role="button" (click)="logOut()">Se déconnecter</a>
+    </div>
+    <div class="position-absolute top-0 start-0">
+        @if (!spotifyLogged()) {
+        <button class="btn btn-outline-primary m-3" role="button" (click)="connectToSpotify()">Se connecter à
+            Spotify</button>
+        } @else {
+        <button class="btn btn-outline-primary m-3" role="button" (click)="disconnectToSpotify()">Se déconnecter à
+            Spotify</button>
+        }
     </div>
     <div class="position-absolute top-50 start-50 translate-middle">
         <h1>Control tower</h1>
-        @if (!spotifyLogged()) {
-        <button class="btn btn-outline-primary" (click)="connectToSpotify()">Se connecter à Spotify</button>
-        } @else {
         <h2>Quand pas de session</h2>
         <p>Créer une session</p>
         <p>Reprendre une session</p>
         <h2>Quand lobby en création</h2>
         <p>Lancer la partie</p>
         <p>Choisir la playlist</p>
+        <p>Arreter la session</p>
         <h2>Pendant la partie</h2>
-        <p>Validé une réponse</p>
-        <p>Relancé la musique</p>
+        <p>Valider une réponse</p>
+        <p>Relancer la musique</p>
+        <p>Arreter la session</p>
         <h2>tout le temps</h2>
-        <p>Overview (avec un bouton pour l'ouvrir dans un nouvel onglet)</p>
-        }
+        <a class="btn btn-outline-primary m-3" role="button" target="_blank" [routerLink]=redirectId()>Ouvrir dans un
+            nouvel onglet</a>
+        <app-overview [sessionIdInput]="sessionId()"></app-overview>
     </div>
 </div>
