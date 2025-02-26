@@ -1,5 +1,6 @@
 export const environment = {
   production: true,
   api: 'potimaron',
-  spotify: 'soupe'
+  spotifyURL: 'soue',
+  spotifyClientId: 'au'
 };
