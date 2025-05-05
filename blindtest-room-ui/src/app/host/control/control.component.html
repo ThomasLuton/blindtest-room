@@ -14,13 +14,18 @@
     </div>
     <div class="position-absolute top-50 start-50 translate-middle">
         <h1>Control tower</h1>
-        <button type="button" class="btn btn-outline-primary m-3" role="button" (click)="createSession()">Commencer une
+        @if (currentSession() == null) {
+        <button type="button" class="btn btn-outline-primary m-3" role="button" (click)="createSession()"
+            [disabled]="!spotifyLogged()">Commencer une
             nouvelle session</button>
-        @for (playlist of userPlaylist(); track playlist.id){
-        <p>{{playlist.name}}</p>
+        @if (!spotifyLogged()) {
+        <p>Vous devez être connecté(e) à Spotify pour créer une session</p>
         }
+        }@else {
+        <app-overview [sessionIdInput]="currentSession()?.code"></app-overview>
         <a class="btn btn-outline-primary m-3" role="button" target="_blank" [routerLink]=redirectId()>Ouvrir dans un
             nouvel onglet</a>
-        <app-overview [sessionIdInput]="sessionId()"></app-overview>
+        }
+
     </div>
 </div>

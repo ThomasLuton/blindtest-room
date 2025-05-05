@@ -1,5 +1,6 @@
-DROP TABLE IF EXISTS hosts;
 DROP TABLE IF EXISTS sessions;
+DROP TABLE IF EXISTS hosts;
+
 
 CREATE TABLE hosts (
     id SERIAL PRIMARY KEY,
@@ -13,5 +14,6 @@ CREATE TABLE sessions (
     created_at TIMESTAMP NOT NULL,
     winner VARCHAR(255),
     step INTEGER NOT NULL,
-    playlist VARCHAR(255) NOT NULL
+    playlist VARCHAR(255),
+    host_id INTEGER NOT NULL REFERENCES hosts
 );

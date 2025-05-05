@@ -27,7 +27,7 @@ export class OverviewComponent {
 
   constructor() {
     this.stomp.watch('/topic/test').subscribe((msg: Message) => {
-      console.log(msg.body);
+      // console.log(msg.body);
     })
   }
 

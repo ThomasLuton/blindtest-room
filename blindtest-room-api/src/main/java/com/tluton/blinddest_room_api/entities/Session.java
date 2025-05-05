@@ -1,9 +1,7 @@
 package com.tluton.blinddest_room_api.entities;
 
 import com.tluton.blinddest_room_api.sessions.Step;
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 
 import java.time.LocalDateTime;
 import java.util.Objects;
@@ -22,6 +20,10 @@ public class Session extends AbstractEntity{
     private Step step;
     @Column(name = "playlist")
     private String playlist;
+
+    @ManyToOne()
+    @JoinColumn(name = "host_id")
+    private Host host;
 
     public Integer getCode() {
         return code;
@@ -63,17 +65,12 @@ public class Session extends AbstractEntity{
         this.playlist = playlist;
     }
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        Session session = (Session) o;
-        return Objects.equals(code, session.code) && Objects.equals(createdAt, session.createdAt) && Objects.equals(winner, session.winner) && step == session.step && Objects.equals(playlist, session.playlist);
+    public Host getHost() {
+        return host;
     }
 
-    @Override
-    public int hashCode() {
-        return Objects.hash(code, createdAt, winner, step, playlist);
+    public void setHost(Host creator) {
+        this.host = creator;
     }
 
     @Override
@@ -84,6 +81,20 @@ public class Session extends AbstractEntity{
                 ", winner='" + winner + '\'' +
                 ", step=" + step +
                 ", playlist='" + playlist + '\'' +
+                ", creator=" + host +
                 '}';
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Session session = (Session) o;
+        return Objects.equals(code, session.code) && Objects.equals(createdAt, session.createdAt) && Objects.equals(winner, session.winner) && step == session.step && Objects.equals(playlist, session.playlist) && Objects.equals(host, session.host);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(code, createdAt, winner, step, playlist, host);
     }
 }

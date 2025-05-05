@@ -1,11 +1,11 @@
-import { Component, computed, inject, signal } from '@angular/core';
+import { Component, computed, effect, inject, Signal, signal, WritableSignal } from '@angular/core';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { ToastService } from '../../services/toast.service';
 import { SpotifyService } from '../../services/spotify.service';
 import { OverviewComponent } from '../overview/overview.component';
 import { SessionService } from '../../services/session.service';
-import { PlaylistService } from '../../services/playlist.service';
-import { toSignal } from '@angular/core/rxjs-interop';
+import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
+import { SessionInfo } from '../../models/SessionInfo';
 
 @Component({
   selector: 'app-control',
@@ -15,19 +15,16 @@ import { toSignal } from '@angular/core/rxjs-interop';
   styles: ``
 })
 export class ControlComponent {
-  logged = signal(!!localStorage.getItem('api-token'))
-  spotifyLogged = signal(!!localStorage.getItem('spotifyAccessToken'));
-  sessionId = signal<number | undefined>(undefined)
-  redirectId = computed(() => '/overview/' + this.sessionId())
-
   readonly router = inject(Router);
   readonly activatedRoute = inject(ActivatedRoute);
   private readonly toast = inject(ToastService);
   private readonly spotify = inject(SpotifyService);
   private readonly session = inject(SessionService);
-  private readonly playlist = inject(PlaylistService);
 
-  readonly userPlaylist = computed(() => this.playlist.getUserPlaylists());
+  logged = signal(!!localStorage.getItem('api-token'))
+  spotifyLogged = signal(!!localStorage.getItem('spotifyAccessToken'));
+  currentSession: WritableSignal<SessionInfo | null> = signal(null);
+  redirectId = computed(() => '/overview/' + this.currentSession()?.code)
 
   constructor() {
     this.activatedRoute.queryParamMap.subscribe(query => {
@@ -45,6 +42,7 @@ export class ControlComponent {
         this.router.navigate(['control'])
       }
     })
+    this.session.getCurrentSession().subscribe((resp) => this.currentSession.set(resp));
   }
 
   logOut() {
@@ -57,13 +55,7 @@ export class ControlComponent {
   }
 
   createSession() {
-    this.session.createSession().subscribe((res) => {
-      this.sessionId.set(res.code);
-    });
-  }
-
-  getUserId() {
-    console.log(this.playlist.getUserPlaylists())
+    this.session.createSession().subscribe((resp) => this.currentSession.set(resp))
   }
 
   connectToSpotify() {
