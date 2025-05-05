@@ -20,7 +20,7 @@ export class SpotifyService {
 
   generateRedirectURI(): string {
     const state = this.createHash(16);
-    const scope = 'user-read-private user-read-email';
+    const scope = 'user-read-private user-read-email playlist-read-private playlist-read-collaborative';
     const clientId = environment.spotifyClientId;
     const redirectURI = this.URL + 'callback';
     this.sendState(state);

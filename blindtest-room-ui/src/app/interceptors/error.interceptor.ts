@@ -14,10 +14,13 @@ export class ErrorInterceptor implements HttpInterceptor {
   readonly toast = inject(ToastService);
   intercept(req: HttpRequest<unknown>, handler: HttpHandler): Observable<HttpEvent<unknown>> {
     return handler.handle(req).pipe(catchError((res) => {
-      console.log(res)
       var toastMessage = res.error.message;
+      console.log(res)
       if (!toastMessage) {
-        toastMessage = res.statusText
+        toastMessage = res.statusText;
+        if (toastMessage === "OK") {
+          toastMessage = res.error.error.message
+        }
       }
       this.toast.error("toast-global", toastMessage)
       return of(res)

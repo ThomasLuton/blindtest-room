@@ -39,7 +39,7 @@ public class WebConfig implements WebMvcConfigurer {
                 .cors(Customizer.withDefaults())
                 .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests((authz) -> authz
-                        .requestMatchers("/auth").permitAll()
+                        .requestMatchers("/auth","/ws", "/public/**").permitAll()
                         .anyRequest().authenticated())
                 .oauth2ResourceServer((oauth2ResourceServer) -> oauth2ResourceServer
                         .jwt(Customizer.withDefaults()));
@@ -60,7 +60,7 @@ public class WebConfig implements WebMvcConfigurer {
     }
 
     @Bean
-    JwtDecoder jwtdecoder() throws Exception {
+    JwtDecoder jwtdecoder() {
         SecretKey secretKey = new SecretKeySpec(
                 secret.getBytes(), "Hmacsha256");
         return NimbusJwtDecoder.withSecretKey(secretKey)

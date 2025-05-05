@@ -1,7 +1,17 @@
 DROP TABLE IF EXISTS hosts;
+DROP TABLE IF EXISTS sessions;
 
 CREATE TABLE hosts (
     id SERIAL PRIMARY KEY,
     email VARCHAR(255) UNIQUE NOT NULL,
     password CHAR(60) NOT NULL
+);
+
+CREATE TABLE sessions (
+    id SERIAL PRIMARY KEY,
+    code INTEGER UNIQUE NOT NULL,
+    created_at TIMESTAMP NOT NULL,
+    winner VARCHAR(255),
+    step INTEGER NOT NULL,
+    playlist VARCHAR(255) NOT NULL
 );

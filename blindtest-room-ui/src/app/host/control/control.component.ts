@@ -3,6 +3,9 @@ import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { ToastService } from '../../services/toast.service';
 import { SpotifyService } from '../../services/spotify.service';
 import { OverviewComponent } from '../overview/overview.component';
+import { SessionService } from '../../services/session.service';
+import { PlaylistService } from '../../services/playlist.service';
+import { toSignal } from '@angular/core/rxjs-interop';
 
 @Component({
   selector: 'app-control',
@@ -12,15 +15,19 @@ import { OverviewComponent } from '../overview/overview.component';
   styles: ``
 })
 export class ControlComponent {
-
   logged = signal(!!localStorage.getItem('api-token'))
   spotifyLogged = signal(!!localStorage.getItem('spotifyAccessToken'));
-  sessionId = signal(234)
+  sessionId = signal<number | undefined>(undefined)
   redirectId = computed(() => '/overview/' + this.sessionId())
+
   readonly router = inject(Router);
   readonly activatedRoute = inject(ActivatedRoute);
   private readonly toast = inject(ToastService);
   private readonly spotify = inject(SpotifyService);
+  private readonly session = inject(SessionService);
+  private readonly playlist = inject(PlaylistService);
+
+  readonly userPlaylist = computed(() => this.playlist.getUserPlaylists());
 
   constructor() {
     this.activatedRoute.queryParamMap.subscribe(query => {
@@ -47,6 +54,16 @@ export class ControlComponent {
     this.logged.set(false);
     this.toast.success('toast-global', 'Bonne journée');
     this.router.navigate(["home"]);
+  }
+
+  createSession() {
+    this.session.createSession().subscribe((res) => {
+      this.sessionId.set(res.code);
+    });
+  }
+
+  getUserId() {
+    console.log(this.playlist.getUserPlaylists())
   }
 
   connectToSpotify() {

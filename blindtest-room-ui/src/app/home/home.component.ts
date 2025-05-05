@@ -1,7 +1,8 @@
-import { Component, effect, inject, signal } from '@angular/core';
+import { Component, inject, signal } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 import { ToastService } from '../services/toast.service';
+import { SessionService } from '../services/session.service';
 
 @Component({
   selector: 'app-home',
@@ -17,7 +18,7 @@ export class HomeComponent {
   private readonly toast = inject(ToastService);
   form = new FormGroup(
     {
-      sessionId: new FormControl('')
+      sessionId: new FormControl<number | undefined>(undefined)
     }
   )
 

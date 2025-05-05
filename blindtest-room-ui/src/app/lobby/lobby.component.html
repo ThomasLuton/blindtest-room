@@ -1,1 +1,14 @@
-<h1>{{sessionId}}</h1>
+<h1>{{session().code}}</h1>
+@if (session().step === "DRAFT") {
+<p>Draft mode</p>
+<p>{{session().playlist}}</p>
+}
+@else if (session().step === "START") {
+<p>Start mode</p>
+}
+@else if (session().step === "FINISH") {
+<p>Finish mode</p>
+}
+@else if (session().step === "EXPIRED") {
+<p>Expired mode</p>
+}

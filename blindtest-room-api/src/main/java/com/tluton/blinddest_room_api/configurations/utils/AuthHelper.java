@@ -37,7 +37,7 @@ public class AuthHelper {
                 .sign(algorithm);
     }
 
-    public void verifyToken(String token) throws Exception{
+    public void verifyToken(String token){
         algorithm.verify(JWT.decode(token));
     }
 
