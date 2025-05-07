@@ -4,7 +4,6 @@ import { ToastService } from '../../services/toast.service';
 import { SpotifyService } from '../../services/spotify.service';
 import { OverviewComponent } from '../overview/overview.component';
 import { SessionService } from '../../services/session.service';
-import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { SessionInfo } from '../../models/SessionInfo';
 
 @Component({
@@ -56,6 +55,10 @@ export class ControlComponent {
 
   createSession() {
     this.session.createSession().subscribe((resp) => this.currentSession.set(resp))
+  }
+
+  sessionClosed() {
+    this.currentSession.set(null);
   }
 
   connectToSpotify() {

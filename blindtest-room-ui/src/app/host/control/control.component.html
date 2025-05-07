@@ -21,10 +21,12 @@
         @if (!spotifyLogged()) {
         <p>Vous devez être connecté(e) à Spotify pour créer une session</p>
         }
-        }@else {
-        <app-overview [sessionIdInput]="currentSession()?.code"></app-overview>
-        <a class="btn btn-outline-primary m-3" role="button" target="_blank" [routerLink]=redirectId()>Ouvrir dans un
-            nouvel onglet</a>
+        }@else{
+        @if (!spotifyLogged()) {
+        <p>Vous devez être connecté(e) à Spotify pour créer une session</p>
+        }@else{
+        <app-overview [sessionIdInput]="currentSession()?.code" (sessionClosed)="sessionClosed()"></app-overview>
+        }
         }
 
     </div>

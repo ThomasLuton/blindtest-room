@@ -2,7 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { environment } from '../../environments/environment';
 import { SpotifyUser } from '../models/spotifyUser';
-import { Observable } from 'rxjs';
+import { Observable, of } from 'rxjs';
 import { SpotifyPlaylist } from '../models/spotifyPlaylist';
 
 @Injectable({
@@ -15,10 +15,10 @@ export class PlaylistService {
 
   constructor() { }
 
-  getUserPlaylists(): SpotifyPlaylist[] {
+  getUserPlaylists(offset: number): SpotifyPlaylist[] {
     var playlists: SpotifyPlaylist[] = []
     this.http.get<SpotifyUser>(this.url + "me").subscribe((me => {
-      this.http.get<any>(this.url + "users/" + me.id + "/playlists").subscribe((resp) => {
+      this.http.get<any>(this.url + "users/" + me.id + "/playlists?limit=5&offset=" + offset).subscribe((resp) => {
         resp.items.forEach((el: SpotifyPlaylist) => {
           playlists.push(el);
         });

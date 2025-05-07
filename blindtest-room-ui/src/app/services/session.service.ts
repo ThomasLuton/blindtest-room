@@ -21,6 +21,14 @@ export class SessionService {
     return this.http.get<SessionInfo>(this.URL + "session/current");
   }
 
+  closeCurrentSession(): Observable<void> {
+    return this.http.put<void>(this.URL + "session/current/close", null);
+  }
+
+  updatePlaylist(id: string): Observable<SessionInfo> {
+    return this.http.put<SessionInfo>(this.URL + "session/current/playlist", { playlist: id });
+  }
+
   joinSession(code: number): Observable<any> {
     const codeSession: CodeSession = {
       code: code

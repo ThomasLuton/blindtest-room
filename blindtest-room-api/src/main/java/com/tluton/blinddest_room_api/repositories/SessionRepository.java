@@ -13,6 +13,6 @@ public interface SessionRepository extends JpaRepository<Session, Long> {
     boolean existsByCode(Integer code);
 
     Optional<SessionInfo> findSessionByCode(Integer code);
-    Optional<SessionInfo> findFirstByHostAndStepBefore(Host host, Step step);
+    Optional<Session> findFirstByHostAndStepBefore(Host host, Step step);
 
 }
