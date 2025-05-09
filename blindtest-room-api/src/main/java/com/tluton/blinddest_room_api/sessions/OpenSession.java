@@ -1,6 +1,9 @@
 package com.tluton.blinddest_room_api.sessions;
 
 import com.tluton.blinddest_room_api.dtos.SessionInfo;
+import com.tluton.blinddest_room_api.errors.BusinessError;
+import com.tluton.blinddest_room_api.errors.CodeError;
+import org.springframework.http.HttpStatus;
 
 import java.util.Collections;
 import java.util.HashSet;
@@ -15,8 +18,19 @@ public class OpenSession {
         this.session = session;
     }
 
+    public void addPlayer(Player player){
+        if(players.contains(player)){
+            throw new BusinessError(CodeError.NameTaken, "Name already take", HttpStatus.BAD_REQUEST);
+        }
+        players.add(player);
+    }
+
+    public void removePlayer(Player player){
+        players.remove(player);
+    }
+
     public Set<Player> getPlayers() {
-        return players;
+        return Collections.unmodifiableSet(players);
     }
 
     public SessionInfo getSession() {

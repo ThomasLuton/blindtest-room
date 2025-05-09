@@ -1,19 +1,22 @@
-<h1>{{publicInfo()?.sessionInfo?.code}}</h1>
-@if (publicInfo()?.sessionInfo?.step) {
+<h1>{{sessionInfo()?.code}}</h1>
+@if (sessionInfo()?.step) {
 <p>Draft mode</p>
-<p>{{publicInfo()?.sessionInfo?.playlist}}</p>
+<p>{{sessionInfo()?.playlist}}</p>
 }
-@else if (publicInfo()?.sessionInfo?.step === "START") {
+@else if (sessionInfo()?.step === "START") {
 <p>Start mode</p>
 }
-@else if (publicInfo()?.sessionInfo?.step === "FINISH") {
+@else if (sessionInfo()?.step === "FINISH") {
 <p>Finish mode</p>
 }
-@else if (publicInfo()?.sessionInfo?.step === "EXPIRED") {
+@else if (sessionInfo()?.step === "EXPIRED") {
 <p>Expired mode</p>
 }
 <p>{{playerName()}}</p>
-<div class="p-5 border border-primary rounded">
+@for (player of players(); track player.name) {
+<p>{{player.name}}</p>
+}
+<div class="p-5 col-3 border border-primary rounded">
     <form [formGroup]="form" (ngSubmit)="onSubmit()" class="d-flex flex-column justify-content-center">
         <div class="mb-3">
             <input formControlName="newName" class="form-control form-control-lg" type="text" name="newName"
@@ -22,3 +25,4 @@
         <button [disabled]="form.invalid" class="btn btn-primary" type="submit">Changer de nom</button>
     </form>
 </div>
+<button (click)="onLeave()">Quitter la session</button>

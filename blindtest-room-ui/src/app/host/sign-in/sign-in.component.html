@@ -1,17 +1,16 @@
 <div class="min-vh-100 position-relative">
-    <div class="position-absolute top-0 end-0">
-        <a class="btn btn-outline-primary m-3" role="button" routerLink="/home">Accueil</a>
-    </div>
+    <app-navigation></app-navigation>
     <div class="position-absolute top-50 start-50 translate-middle">
         <h1 class="text-center pb-3">Se connecter</h1>
         <div class="p-5 border border-primary rounded">
             <form [formGroup]="form" (ngSubmit)="onSubmit()" class="d-flex flex-column justify-content-center">
                 <div class="mb-3">
-                    <input formControlName="email"  class="form-control form-control-lg" type="text" name="email" id="email" placeholder="Email">
+                    <input formControlName="email" class="form-control form-control-lg" type="text" name="email"
+                        id="email" placeholder="Email">
                 </div>
                 <div class="mb-3">
-                    <input formControlName="password"  class="form-control form-control-lg" type="password" name="password" id="password"
-                        placeholder="Mot de passe">
+                    <input formControlName="password" class="form-control form-control-lg" type="password"
+                        name="password" id="password" placeholder="Mot de passe">
                 </div>
                 <button [disabled]="form.invalid" class="btn btn-primary" type="submit">Se connecter</button>
             </form>

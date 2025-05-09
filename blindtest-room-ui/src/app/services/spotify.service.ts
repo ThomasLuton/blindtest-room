@@ -11,7 +11,7 @@ export class SpotifyService {
   private readonly URL = environment.spotifyURL;
 
   private sendState(state: string): void {
-    this.http.post(this.URL + 'send-state', { state: state }).subscribe()
+    this.http.post(this.URL + 'send-state', { state: state }).subscribe();
   }
 
   private createHash(length: number): string {
@@ -20,9 +20,9 @@ export class SpotifyService {
 
   generateRedirectURI(): string {
     const state = this.createHash(16);
-    const scope = 'user-read-private user-read-email playlist-read-private playlist-read-collaborative';
+    const scope = 'user-read-private%20user-read-email%20playlist-read-private%20playlist-read-collaborative';
     const clientId = environment.spotifyClientId;
-    const redirectURI = this.URL + 'callback';
+    const redirectURI = encodeURIComponent(this.URL + 'callback');
     this.sendState(state);
     return `https://accounts.spotify.com/authorize?response_type=code&client_id=${clientId}&scope=${scope}&redirect_uri=${redirectURI}&state=${state}`
   }

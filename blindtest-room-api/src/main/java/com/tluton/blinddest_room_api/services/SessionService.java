@@ -77,16 +77,22 @@ public class SessionService {
         sessions.save(session);
         return new SessionInfo(session.getPlaylist(), session.getStep(), session.getCode());
     }
+
+    public SessionInfo getSessionInfo(Integer code){
+        return sessions.findSessionByCode(code).orElseThrow(()-> new BusinessError(CodeError.SessionNotExist, "This session don't exist", HttpStatus.NOT_FOUND));
+    }
     public PublicSessionInfo joinSession(CodeSession codeSession){
         SessionInfo sessionInfo = sessions.findSessionByCode(codeSession.code()).orElseThrow(()-> new BusinessError(CodeError.SessionNotExist, "This session don't exist", HttpStatus.NOT_FOUND));
         String playerName = codeSession.playerName();
-        synchronized (this){
-            if(playerName.equals("")){
-                playerName = "Joueur " + sessionManager.getOpenSessionBySessionInfo(sessionInfo).getPlayers().size();
-                sessionManager.addPlayer(sessionInfo, new Player(playerName, 0));
-            }
-        }
+        sessionManager.addPlayer(sessionInfo, new Player(playerName, 0));
         return new PublicSessionInfo(sessionInfo, playerName);
+    }
+
+    public PublicSessionInfo leaveSession(CodeSession codeSession){
+        SessionInfo sessionInfo = sessions.findSessionByCode(codeSession.code()).orElseThrow(()-> new BusinessError(CodeError.SessionNotExist, "This session don't exist", HttpStatus.NOT_FOUND));
+        String playerName = codeSession.playerName();
+        sessionManager.removePlayer(sessionInfo, playerName);
+        return new PublicSessionInfo(sessionInfo, codeSession.playerName());
     }
 
     public PublicSessionInfo updatePlayerName(UpdatePlayerName input){

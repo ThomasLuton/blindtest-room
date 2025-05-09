@@ -5,11 +5,12 @@ import { SpotifyService } from '../../services/spotify.service';
 import { OverviewComponent } from '../overview/overview.component';
 import { SessionService } from '../../services/session.service';
 import { SessionInfo } from '../../models/SessionInfo';
+import { NavigationComponent } from "../../commons/navigation/navigation.component";
 
 @Component({
   selector: 'app-control',
   standalone: true,
-  imports: [OverviewComponent, RouterLink],
+  imports: [OverviewComponent, NavigationComponent],
   templateUrl: './control.component.html',
   styles: ``
 })
@@ -20,7 +21,6 @@ export class ControlComponent {
   private readonly spotify = inject(SpotifyService);
   private readonly session = inject(SessionService);
 
-  logged = signal(!!localStorage.getItem('api-token'))
   spotifyLogged = signal(!!localStorage.getItem('spotifyAccessToken'));
   currentSession: WritableSignal<SessionInfo | null> = signal(null);
   redirectId = computed(() => '/overview/' + this.currentSession()?.code)
@@ -33,6 +33,7 @@ export class ControlComponent {
 
       if (errorMessage != null) {
         this.toast.error('toast-global', 'Problème lors de la connection avec Spotify')
+        this.router.navigate(["control"]);
       }
       if (accessToken != null && refreshToken != null) {
         this.spotify.storeTokens(accessToken, refreshToken)
@@ -44,15 +45,6 @@ export class ControlComponent {
     this.session.getCurrentSession().subscribe((resp) => this.currentSession.set(resp));
   }
 
-  logOut() {
-    localStorage.removeItem('api-token');
-    localStorage.removeItem('spotifyAccessToken');
-    localStorage.removeItem('spotifyRefreshToken');
-    this.logged.set(false);
-    this.toast.success('toast-global', 'Bonne journée');
-    this.router.navigate(["home"]);
-  }
-
   createSession() {
     this.session.createSession().subscribe((resp) => this.currentSession.set(resp))
   }
@@ -61,14 +53,7 @@ export class ControlComponent {
     this.currentSession.set(null);
   }
 
-  connectToSpotify() {
-    window.location.href = this.spotify.generateRedirectURI();
-  }
-
-  disconnectToSpotify() {
-    localStorage.removeItem('spotifyAccessToken');
-    localStorage.removeItem('spotifyRefreshToken');
-    this.toast.success('toast-global', 'Connection avec Spotify interrompu');
-    this.spotifyLogged.set(false)
+  onSpotifyDisconnect() {
+    this.spotifyLogged.set(false);
   }
 }

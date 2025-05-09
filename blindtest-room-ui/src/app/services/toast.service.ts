@@ -32,5 +32,8 @@ export class ToastService {
   public error(id: string, msg: string) {
     this.showToast(id, "text-bg-danger", msg);
   }
+  public info(id: string, msg: string) {
+    this.showToast(id, "text-bg-info", msg);
+  }
 }
 

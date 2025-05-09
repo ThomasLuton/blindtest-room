@@ -29,26 +29,27 @@ public class SessionManager implements DisposableBean {
     }
 
     public void closeSession(SessionInfo sessionInfo){
-        OpenSession session = getOpenSessionBySessionInfo(sessionInfo);
+        OpenSession session = getOpenSessionBySessionInfo(sessionInfo.code());
         openSessions.remove(session);
     }
 
     public void addPlayer(SessionInfo sessionInfo, Player player){
-        OpenSession session = getOpenSessionBySessionInfo(sessionInfo);
-        session.getPlayers().add(player);
+        OpenSession session = getOpenSessionBySessionInfo(sessionInfo.code());
+        session.addPlayer(player);
     }
 
     public void updatePlayerName(SessionInfo sessionInfo, String playerName, String newName){
-        OpenSession session = getOpenSessionBySessionInfo(sessionInfo);
+        OpenSession session = getOpenSessionBySessionInfo(sessionInfo.code());
         Player player = session.getPlayers().stream()
                 .filter(p-> p.getName().equals(playerName))
                 .findFirst()
                 .orElseThrow(()-> new BusinessError(CodeError.PlayerNotFound, "Player not found", HttpStatus.NOT_FOUND));
-        player.setName(newName);
+        session.removePlayer(player);
+        session.addPlayer(new Player(newName, player.getScore()));
     }
 
     public void addPoint(SessionInfo sessionInfo, String playerName, Integer point){
-        OpenSession session = getOpenSessionBySessionInfo(sessionInfo);
+        OpenSession session = getOpenSessionBySessionInfo(sessionInfo.code());
         Player player = session.getPlayers().stream()
                 .filter(p-> p.getName().equals(playerName))
                 .findFirst()
@@ -58,18 +59,18 @@ public class SessionManager implements DisposableBean {
         player.setScore(score);
     }
 
-    public void removePlayer(SessionInfo sessionInfo, Player playerName){
-        OpenSession session = getOpenSessionBySessionInfo(sessionInfo);
+    public void removePlayer(SessionInfo sessionInfo, String playerName){
+        OpenSession session = getOpenSessionBySessionInfo(sessionInfo.code());
         Player player = session.getPlayers().stream()
                 .filter(p-> p.getName().equals(playerName))
                 .findFirst()
                 .orElseThrow(()-> new BusinessError(CodeError.PlayerNotFound, "Player not found", HttpStatus.NOT_FOUND));
-        session.getPlayers().remove(player);
+        session.removePlayer(player);
     }
 
-    public OpenSession getOpenSessionBySessionInfo(SessionInfo sessionInfo){
+    public OpenSession getOpenSessionBySessionInfo(Integer code){
         return openSessions.stream()
-                .filter(openSession -> openSession.getSession().code().equals(sessionInfo.code()))
+                .filter(openSession -> openSession.getSession().code().equals(code))
                 .findFirst()
                 .orElseThrow(()-> new BusinessError(CodeError.SessionNotExist, "This session don't exist", HttpStatus.NOT_FOUND));
     }

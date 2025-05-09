@@ -1,9 +1,12 @@
-import { Component, inject, OnInit, signal, Signal, WritableSignal } from '@angular/core';
+import { Component, inject, OnDestroy, signal, WritableSignal } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { SessionService } from '../services/session.service';
-import { toSignal } from '@angular/core/rxjs-interop';
-import { PublicInfo } from '../models/PublicInfo';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { PublicService } from '../services/public.service';
+import { StompService } from '../services/stomp.service';
+import { Message } from '@stomp/stompjs';
+import { SessionInfo } from '../models/SessionInfo';
+import { Player } from '../models/player';
+import { ToastService } from '../services/toast.service';
 
 @Component({
   selector: 'app-lobby',
@@ -12,47 +15,64 @@ import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angula
   templateUrl: './lobby.component.html',
   styles: ``
 })
-export class LobbyComponent {
+export class LobbyComponent implements OnDestroy {
 
   private readonly playerNameStorageKey = 'playerName'
   readonly route = inject(ActivatedRoute);
   readonly router = inject(Router)
+  private readonly stomp = inject(StompService);
+  private readonly toast = inject(ToastService);
   readonly sessionId = Number(this.route.snapshot.paramMap.get('id'));
-  private readonly sessionService = inject(SessionService);
-  publicInfo: WritableSignal<PublicInfo | null> = signal(null);
+  private readonly publicService = inject(PublicService);
+  sessionInfo: WritableSignal<SessionInfo | null> = signal(null);
   playerName: WritableSignal<string> = signal("");
+  players: WritableSignal<Player[]> = signal([]);
   form = new FormGroup(
     {
       newName: new FormControl('', [Validators.required])
     }
   )
   constructor() {
-    const storedName = localStorage.getItem(this.playerNameStorageKey);
-    if (storedName != null) {
-      this.playerName.set(storedName);
-    }
-    this.sessionService.joinSession(this.sessionId, this.playerName()).subscribe((res) => {
-      this.publicInfo.set(res);
-      this.playerName.set(res.playerName);
-      localStorage.setItem(this.playerNameStorageKey, res.playerName);
-    });
+    this.publicService.getSessionInfo(this.sessionId).subscribe((resp) => {
+      this.sessionInfo.set(resp);
+    })
+    this.publicService.getPlayers(this.sessionId).subscribe((res) => {
+      this.players.set(res);
+      var player = localStorage.getItem(this.playerNameStorageKey);
+      if (!!player) {
+        this.playerName.set(player);
+      } else {
+        this.playerName.set("Joueur " + res.length);
+      }
+      this.publicService.joinSession(this.sessionId, this.playerName()).subscribe(() => {
+        localStorage.setItem(this.playerNameStorageKey, this.playerName());
+      });
+    })
+    this.stomp.watch('/topic/' + this.sessionId).subscribe((msg: Message) => {
+      this.publicService.getPlayers(this.sessionId).subscribe((res) => {
+        this.players.set(res);
+        this.toast.info("toast-global", msg.body)
+      })
+    })
   }
 
   onSubmit() {
     const isFormValid = this.form.valid;
     if (isFormValid) {
       const newName = this.form.value.newName?.trim() as string;
-      console.log(this.playerName())
-      this.sessionService.updatePlayerName(this.sessionId, this.playerName(), newName).subscribe(() => {
+      this.publicService.updatePlayerName(this.sessionId, this.playerName(), newName).subscribe(() => {
         this.playerName.set(newName);
         localStorage.setItem(this.playerNameStorageKey, newName);
       });
     }
   }
 
-
-
   onLeave() {
+    localStorage.setItem(this.playerNameStorageKey, "");
+    this.router.navigate(["home"])
+  }
 
+  ngOnDestroy(): void {
+    this.publicService.leaveSession(this.sessionId, this.playerName()).subscribe();
   }
 }

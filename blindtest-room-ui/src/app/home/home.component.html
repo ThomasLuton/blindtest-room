@@ -1,14 +1,5 @@
 <div class="min-vh-100 position-relative">
-    @if(logged()) {
-    <div class="position-absolute top-0 end-0">
-        <a class="btn btn-outline-primary m-3" role="button" routerLink="/control">Centre de contrôle</a>
-        <a class="btn btn-outline-primary m-3" role="button" (click)="logOut()">Se déconnecter</a>
-    </div>
-    } @else {
-    <div class="position-absolute top-0 end-0">
-        <a class="btn btn-outline-primary m-3" role="button" routerLink="/sign-in">Se connecter</a>
-    </div>
-    }
+    <app-navigation></app-navigation>
     <div class="position-absolute top-50 start-50 translate-middle">
         <h1 class="text-center pb-3">Blindtest Room</h1>
         <div class="p-5 border border-primary rounded">

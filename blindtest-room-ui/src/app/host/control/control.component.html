@@ -1,17 +1,5 @@
 <div class="min-vh-100 position-relative">
-    <div class="position-absolute top-0 end-0">
-        <a class="btn btn-outline-primary m-3" role="button" routerLink="/home">Accueil</a>
-        <a class="btn btn-outline-primary m-3" role="button" (click)="logOut()">Se déconnecter</a>
-    </div>
-    <div class="position-absolute top-0 start-0">
-        @if (!spotifyLogged()) {
-        <button class="btn btn-outline-primary m-3" role="button" (click)="connectToSpotify()">Se connecter à
-            Spotify</button>
-        } @else {
-        <button class="btn btn-outline-primary m-3" role="button" (click)="disconnectToSpotify()">Se déconnecter à
-            Spotify</button>
-        }
-    </div>
+    <app-navigation [spotifyLogged]="spotifyLogged()" (spotifyDisconnected)="onSpotifyDisconnect()"></app-navigation>
     <div class="position-absolute top-50 start-50 translate-middle">
         <h1>Control tower</h1>
         @if (currentSession() == null) {

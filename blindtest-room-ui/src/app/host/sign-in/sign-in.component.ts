@@ -4,11 +4,12 @@ import { FormControl, FormGroup, ReactiveFormsModule, Validators } from "@angula
 import { AuthService } from "../../services/auth.service";
 import { Credential } from "../../models/credential";
 import { ToastService } from '../../services/toast.service';
+import { NavigationComponent } from "../../commons/navigation/navigation.component";
 
 @Component({
   selector: 'app-sign-in',
   standalone: true,
-  imports: [RouterLink, ReactiveFormsModule],
+  imports: [ReactiveFormsModule, NavigationComponent],
   templateUrl: './sign-in.component.html',
   styles: ``
 })
