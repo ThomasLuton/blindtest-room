@@ -1,22 +1,23 @@
 package com.tluton.blinddest_room_api.services;
 
-import com.tluton.blinddest_room_api.dtos.CodeSession;
-import com.tluton.blinddest_room_api.dtos.SessionInfo;
-import com.tluton.blinddest_room_api.dtos.UpdatePlaylist;
+import com.tluton.blinddest_room_api.dtos.*;
 import com.tluton.blinddest_room_api.entities.Host;
 import com.tluton.blinddest_room_api.entities.Session;
 import com.tluton.blinddest_room_api.errors.BusinessError;
 import com.tluton.blinddest_room_api.errors.CodeError;
 import com.tluton.blinddest_room_api.repositories.HostRepository;
 import com.tluton.blinddest_room_api.repositories.SessionRepository;
+import com.tluton.blinddest_room_api.sessions.Player;
+import com.tluton.blinddest_room_api.sessions.SessionManager;
 import com.tluton.blinddest_room_api.sessions.Step;
-import org.aspectj.apache.bcel.classfile.Code;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.core.parameters.P;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.Random;
+import java.util.Set;
 
 @Service
 @Transactional(readOnly = true)
@@ -25,23 +26,27 @@ public class SessionService {
     private final SessionRepository sessions;
     private final HostRepository hosts;
 
-    public SessionService(SessionRepository sessions, HostRepository hosts){
+    private final SessionManager sessionManager;
+
+    public SessionService(SessionRepository sessions, HostRepository hosts, SessionManager sessionManager){
         this.sessions = sessions;
         this.hosts = hosts;
+        this.sessionManager = sessionManager;
     }
 
     @Transactional
     public SessionInfo createSession(String userName){
         Host host = getHost(userName);
         SessionInfo sessionInfo = getHostCurrentSession(userName);
-        if(sessionInfo == null){
+        if(sessionInfo == null) {
             Session session = new Session();
             session.setHost(host);
             session.setCode(getNewSessionCode());
             session.setCreatedAt(LocalDateTime.now());
             session.setStep(Step.DRAFT);
             sessions.save(session);
-            return new SessionInfo("", session.getStep(), session.getCode());
+            sessionInfo = new SessionInfo("", session.getStep(), session.getCode());
+            openSession(sessionInfo);
         }
         return sessionInfo;
     }
@@ -61,6 +66,7 @@ public class SessionService {
         Session session = sessions.findFirstByHostAndStepBefore(host, Step.FINISH).orElseThrow(()-> new BusinessError(CodeError.SessionNotExist, "This session don't exist", HttpStatus.NOT_FOUND));
         session.setStep(Step.FINISH);
         sessions.save(session);
+        sessionManager.closeSession(new SessionInfo(session.getPlaylist(), session.getStep(), session.getCode()));
     }
 
     @Transactional
@@ -71,8 +77,22 @@ public class SessionService {
         sessions.save(session);
         return new SessionInfo(session.getPlaylist(), session.getStep(), session.getCode());
     }
-    public SessionInfo joinSession(CodeSession codeSession){
-        return sessions.findSessionByCode(codeSession.code()).orElseThrow(()-> new BusinessError(CodeError.SessionNotExist, "This session don't exist", HttpStatus.NOT_FOUND));
+    public PublicSessionInfo joinSession(CodeSession codeSession){
+        SessionInfo sessionInfo = sessions.findSessionByCode(codeSession.code()).orElseThrow(()-> new BusinessError(CodeError.SessionNotExist, "This session don't exist", HttpStatus.NOT_FOUND));
+        String playerName = codeSession.playerName();
+        synchronized (this){
+            if(playerName.equals("")){
+                playerName = "Joueur " + sessionManager.getOpenSessionBySessionInfo(sessionInfo).getPlayers().size();
+                sessionManager.addPlayer(sessionInfo, new Player(playerName, 0));
+            }
+        }
+        return new PublicSessionInfo(sessionInfo, playerName);
+    }
+
+    public PublicSessionInfo updatePlayerName(UpdatePlayerName input){
+        SessionInfo sessionInfo = sessions.findSessionByCode(input.codeSession().code()).orElseThrow(()-> new BusinessError(CodeError.SessionNotExist, "This session don't exist", HttpStatus.NOT_FOUND));
+        sessionManager.updatePlayerName(sessionInfo, input.codeSession().playerName(), input.newName());
+        return new PublicSessionInfo(sessionInfo, input.newName());
     }
 
     private Integer getNewSessionCode(){
@@ -85,5 +105,10 @@ public class SessionService {
     
     private Host getHost(String userName){
         return hosts.findHostByEmail(userName).orElseThrow(()-> new BusinessError(CodeError.HostNotFound, "Host not found", HttpStatus.NOT_FOUND));
+    }
+
+    private void openSession(SessionInfo sessionInfo){
+        sessionManager.openSession(sessionInfo);
+        sessionManager.addPlayer(sessionInfo, new Player("Arbitre", 0));
     }
 }

@@ -2,7 +2,6 @@ import { Component, inject, signal } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 import { ToastService } from '../services/toast.service';
-import { SessionService } from '../services/session.service';
 
 @Component({
   selector: 'app-home',

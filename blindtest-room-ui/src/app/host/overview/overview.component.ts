@@ -42,7 +42,7 @@ export class OverviewComponent {
 
   constructor() {
     this.session.getCurrentSession().subscribe((res) => this.currentSession.set(res));
-    this.stomp.watch('/topic/test').subscribe((msg: Message) => {
+    this.stomp.watch('/topic/10407767').subscribe((msg: Message) => {
       console.log(msg.body);
     })
   }

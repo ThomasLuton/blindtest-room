@@ -2,5 +2,5 @@ package com.tluton.blinddest_room_api.errors;
 
 public enum CodeError {
     WrongCredentials,
-    SessionNotExist, HostNotFound, SessionAlreadyExist
+    SessionNotExist, HostNotFound, PlayerNotFound, SessionAlreadyExist
 }

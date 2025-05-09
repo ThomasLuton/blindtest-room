@@ -7,6 +7,7 @@ import com.tluton.blinddest_room_api.sessions.Step;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import javax.swing.text.html.Option;
+import java.util.List;
 import java.util.Optional;
 
 public interface SessionRepository extends JpaRepository<Session, Long> {
@@ -14,5 +15,6 @@ public interface SessionRepository extends JpaRepository<Session, Long> {
 
     Optional<SessionInfo> findSessionByCode(Integer code);
     Optional<Session> findFirstByHostAndStepBefore(Host host, Step step);
+    List<Session> findAllByStepBefore(Step step);
 
 }

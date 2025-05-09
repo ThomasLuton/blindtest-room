@@ -1,14 +1,24 @@
-<h1>{{session().code}}</h1>
-@if (session().step === "DRAFT") {
+<h1>{{publicInfo()?.sessionInfo?.code}}</h1>
+@if (publicInfo()?.sessionInfo?.step) {
 <p>Draft mode</p>
-<p>{{session().playlist}}</p>
+<p>{{publicInfo()?.sessionInfo?.playlist}}</p>
 }
-@else if (session().step === "START") {
+@else if (publicInfo()?.sessionInfo?.step === "START") {
 <p>Start mode</p>
 }
-@else if (session().step === "FINISH") {
+@else if (publicInfo()?.sessionInfo?.step === "FINISH") {
 <p>Finish mode</p>
 }
-@else if (session().step === "EXPIRED") {
+@else if (publicInfo()?.sessionInfo?.step === "EXPIRED") {
 <p>Expired mode</p>
 }
+<p>{{playerName()}}</p>
+<div class="p-5 border border-primary rounded">
+    <form [formGroup]="form" (ngSubmit)="onSubmit()" class="d-flex flex-column justify-content-center">
+        <div class="mb-3">
+            <input formControlName="newName" class="form-control form-control-lg" type="text" name="newName"
+                id="newName" placeholder="Nouveau nom">
+        </div>
+        <button [disabled]="form.invalid" class="btn btn-primary" type="submit">Changer de nom</button>
+    </form>
+</div>

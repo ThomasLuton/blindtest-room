@@ -1,3 +1,4 @@
 export interface CodeSession {
-    code: number
+    code: number,
+    playerName: string
 }

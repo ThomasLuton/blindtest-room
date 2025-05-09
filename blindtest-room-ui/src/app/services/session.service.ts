@@ -4,6 +4,7 @@ import { environment } from '../../environments/environment';
 import { CodeSession } from '../models/codeSession';
 import { Observable } from 'rxjs';
 import { SessionInfo } from '../models/SessionInfo';
+import { PublicInfo } from '../models/PublicInfo';
 
 @Injectable({
   providedIn: 'root'
@@ -29,10 +30,22 @@ export class SessionService {
     return this.http.put<SessionInfo>(this.URL + "session/current/playlist", { playlist: id });
   }
 
-  joinSession(code: number): Observable<any> {
+  joinSession(code: number, playerName: string): Observable<PublicInfo> {
     const codeSession: CodeSession = {
-      code: code
+      code: code,
+      playerName: playerName
     }
-    return this.http.post<any>(this.URL + "public/join", codeSession);
+    return this.http.post<PublicInfo>(this.URL + "public/join", codeSession);
+  }
+
+  updatePlayerName(code: number, oldName: string, newName: string): Observable<void> {
+    const input = {
+      codeSession: {
+        code: code,
+        playerName: oldName
+      },
+      newName: newName
+    }
+    return this.http.put<void>(this.URL + "public/update-name", input);
   }
 }

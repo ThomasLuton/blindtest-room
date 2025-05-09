@@ -4,6 +4,7 @@ import com.tluton.blinddest_room_api.dtos.UpdatePlaylist;
 import com.tluton.blinddest_room_api.dtos.SessionInfo;
 import com.tluton.blinddest_room_api.entities.Session;
 import com.tluton.blinddest_room_api.services.SessionService;
+import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.security.core.Authentication;
@@ -31,6 +32,12 @@ public class SessionController {
         return sessionService.getHostCurrentSession(authentication.getName());
     }
 
+    @PostMapping("/current")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void joinSession(Authentication authentication){
+
+    }
+
     @PutMapping("/current/close")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void closeCurrentSession(Authentication authentication){
@@ -38,8 +45,7 @@ public class SessionController {
     }
 
     @PutMapping("/current/playlist")
-    public SessionInfo updatePlaylist(Authentication authentication, @RequestBody UpdatePlaylist input){
+    public SessionInfo updatePlaylist(Authentication authentication, @RequestBody @Valid UpdatePlaylist input){
         return sessionService.updatePlaylist(authentication.getName(), input);
     }
-
 }
