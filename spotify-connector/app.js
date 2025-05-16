@@ -1,23 +1,23 @@
-import {environment} from "./environments/secrets.js";
+import dotenv from 'dotenv';
 import express from 'express';
 import request from 'request';
 import jwt from 'jsonwebtoken';
 import cors from "cors";
 import cookieParser from "cookie-parser";
 import bodyParser from "body-parser";
-import path from 'path';
 import querystring from "querystring";
 
+dotenv.config();
 
-var clientId = environment.clientId;
-var clientSecret = environment.clientSecret;
-var redirectURI = environment.redirectURI;
-var port = environment.port;
-var frontURL = environment.frontURL;
+var clientId = process.env.CLIENT_ID;
+var clientSecret = process.env.CLIENT_SECRET;
+var redirectURI = process.env.REDIRECT_URI;
+var port = process.env.PORT;
+var frontURL = process.env.FRONT_URL;
 var stateKey = 'spotify_auth_state';
 var app = express();
 var corsOptions = {
-    origin: environment.cors,
+    origin: process.env.CORS.split(" "),
     optionsSuccessStatus: 200
 }
 
@@ -31,7 +31,7 @@ function authenticateToken(req, res, next) {
 
     if (token == null) return res.sendStatus(401)
 
-    jwt.verify(token, environment.apiSecret, (err, user) => {
+    jwt.verify(token, process.env.API_SECRET, (err, user) => {
         if (err) return res.sendStatus(403)
         req.user = user
         next()

@@ -28,3 +28,5 @@ Thumbs.db
 
 # Secrets
 /environments
+.env.dev
+.env.prod
